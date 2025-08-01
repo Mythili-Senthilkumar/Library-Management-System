@@ -1,0 +1,75 @@
+package library;
+
+import java.util.Scanner;
+
+public class BookMenu {
+
+	public static void bookMenu(Scanner sc)
+	{
+		BookDAO bk=new BookDAO();
+		while(true)
+		{
+			System.out.println("----- Book Operations -----");
+			System.out.println("1. Add book");
+			System.out.println("2. Update book");
+			System.out.println("3. Delete book");
+			System.out.println("4. View book");
+			System.out.println("5. Search book");
+			System.out.println("6. Exit");
+			System.out.println("choose an option: ");
+			int option=sc.nextInt();
+			
+			switch(option)
+			{
+			case 1:  sc.nextLine();
+			         System.out.println("Enter book id: ");
+			         int bookId=sc.nextInt();
+			         sc.nextLine();
+			         System.out.println("Enter title: ");
+			         String title=sc.nextLine();
+			         System.out.println("Enter author: ");
+			         String author=sc.nextLine();
+			         System.out.println("Enter quantity: ");
+			         int quantity=sc.nextInt();
+			         bk.addBook(title, author,bookId, quantity);
+			         break;
+			         
+			case 2: 
+				System.out.println("Enter book id: ");
+				int bookid=sc.nextInt();
+				sc.nextLine();
+				System.out.println("Enter new title: ");
+				title=sc.nextLine();
+				System.out.println("Enter new author: ");
+				author=sc.nextLine();
+				System.out.println("Enter new quantity: ");
+				quantity=sc.nextInt();
+				bk.updateBook(title,author,bookid,quantity);
+				break;
+				
+			case 3:
+				System.out.println("Enter book id to delete: ");
+				int deleteid=sc.nextInt();
+				System.out.println("Enter quantity: ");
+				int quan=sc.nextInt();
+				bk.deleteBook(null, null, deleteid, quan);
+				break;
+				
+			case 4:
+				bk.viewAll();
+				break;
+				
+			case 5:
+				System.out.println("Enter search key: ");
+				sc.nextLine();
+				String key=sc.nextLine();
+				bk.searchBook(key);
+				break;
+			case 6:
+				System.out.println("Thank you!!...");
+				return;
+			default: System.out.println("Invalid option. Try again");
+			}
+		}
+	}
+}
