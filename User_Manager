@@ -1,0 +1,75 @@
+package manager;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Scanner;
+
+import connection.DBconnection;
+
+public class User_Manager {
+
+	public static void register(Scanner sc)
+	{
+		try(Connection connection=DBconnection.getConnection())
+		{
+			System.out.println("Enter name: ");
+			String name=sc.next();
+			
+			System.out.println("Enter reg.no: ");
+			int reg=sc.nextInt();
+			sc.nextLine();
+			
+			System.out.println("Enter department: ");
+			String dept=sc.nextLine();
+			
+			String registerCheck_query="insert into user(regno,name,dept)values(?,?,?)";
+			PreparedStatement pst=connection.prepareStatement(registerCheck_query);
+			pst.setInt(1, reg);
+			pst.setString(2, name);
+			pst.setString(3, dept);
+		   int rs=pst.executeUpdate();
+			if(rs>0)
+			{
+				System.out.println("Registration successful!!...");
+			}
+			else System.out.println("Registration failed!!.. Try again...");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static int login(Scanner sc)
+	{
+		try(Connection connection=DBconnection.getConnection())
+		{
+			System.out.println("Enter register number: ");
+			int reg=sc.nextInt();
+			sc.nextLine();
+			
+			System.out.println("Enter name: ");
+			String name=sc.nextLine();
+			
+			String logCheck="select * from user where regno=? and name=?";
+			PreparedStatement pst2=connection.prepareStatement(logCheck);
+			pst2.setInt(1, reg);
+			pst2.setString(2, name);
+			//pst2.executeUpdate();
+			ResultSet rs=pst2.executeQuery();
+			if(rs.next()) {
+			System.out.println("Login successful!!... Welcome "+rs.getString("name"));
+			return reg;
+			}
+			else {
+				System.out.println("Please check entered details!!...");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+}
