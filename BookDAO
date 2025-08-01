@@ -1,0 +1,137 @@
+package library;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import connection.DBconnection;
+
+public class BookDAO {
+	
+	PreparedStatement pst;
+	
+	public void addBook(String title,String author,int bookId,int quantity){
+		String add_query="insert into books(title,author,quantity,bookid)values(?,?,?,?)";
+		DBconnection db=new DBconnection();
+		try(Connection connection=DBconnection.getConnection())
+		{
+			pst=connection.prepareStatement(add_query);
+			pst.setString(1,title);
+			pst.setString(2, author);
+			pst.setInt(3,quantity);
+			pst.setInt(4, bookId);
+			
+			int result=pst.executeUpdate();
+			if(result>0)
+				System.out.println("Book added successfully");
+			else
+				System.out.println("Book insertion failed!!...");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+				
+	}
+	
+	public void updateBook(String title,String author,int bookId,int quantity)
+	{
+		String update_query="update books set title=?,author=?,quantity=? where bookid=?";
+		try(Connection connection=DBconnection.getConnection())
+		{
+			pst=connection.prepareStatement(update_query);
+			pst.setString(1, title);
+			pst.setString(2, author);
+			pst.setInt(3,quantity);
+			pst.setInt(4,bookId);
+			
+			
+			int result=pst.executeUpdate();
+			if(result>0)
+				System.out.println("Book updated successfully");
+			else System.out.println("Book updation failed!!...");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void deleteBook(String title,String author,int BookId,int quantity)
+	{
+		String delete_query="delete from books where bookid=?";
+		try(Connection connection=DBconnection.getConnection())
+		{
+			pst=connection.prepareStatement(delete_query);
+			pst.setInt(1,BookId);
+			int result=pst.executeUpdate();
+			if(result>0) 
+				System.out.println("Book deleted successfully");
+			else System.out.println("Book deletion failed");
+		}
+
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+	}
+		
+   public void viewAll() {
+	   String view_query="select * from books";
+	   try(Connection connection=DBconnection.getConnection())
+	   {
+		   pst=connection.prepareStatement(view_query);
+		   ResultSet rs=pst.executeQuery();
+		   System.out.println("Id-Title-Author-Quantity");
+		   while(rs.next())
+		   {
+			   System.out.println(rs.getInt("bookId")+"-"+
+		                          rs.getString("title")+"-"+
+					              rs.getString("author")+"-"+
+		                          rs.getInt("quantity"));
+		   }
+	   } catch (SQLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+   }
+   
+   public void searchBook(String key)
+   {
+	   String search_query="select * from books where bookid = ?  OR title LIKE ? OR author LIKE ?";
+	   try(Connection connection=DBconnection.getConnection())
+	   {
+		   pst=connection.prepareStatement(search_query);
+		   try {
+	            pst.setInt(1, Integer.parseInt(key)); // Try key as number for bookid
+	        } catch (NumberFormatException e) {
+	            pst.setInt(1, -1); // Won’t match any bookid
+	        }
+		   pst.setString(2,"%"+key+"%");
+		   pst.setString(3, "%"+key+"%");
+		   ResultSet rs=pst.executeQuery();
+		   boolean found=false;
+		   while(rs.next())
+		   {
+			   if(!found) {
+				   System.out.println("Matching books: ");
+				   System.out.println("Id-Title-Author-Quantity");
+				   found=true;
+			   }
+			   System.out.println(rs.getInt("bookid")+"-"+
+			                      rs.getString("title")+"-"+
+					              rs.getString("author")+"-"+
+			                      rs.getInt("quantity")
+					            );
+		   }
+		   if(!found)
+		   {
+			   System.out.println("No books found for: "+key);
+		   }
+		   
+	   } catch (SQLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+   }
+}
+  Boo
